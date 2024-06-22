@@ -21,6 +21,15 @@ import com.surendramaran.yolov8tflite.Constants.MODEL_PATH
 import com.surendramaran.yolov8tflite.databinding.ActivityMainBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import android.graphics.Canvas
+import android.net.Uri
+import android.provider.MediaStore
+import android.widget.Button
+import java.io.IOException
+import java.io.OutputStream
+import android.content.Intent
+import android.widget.Toast
+import android.content.ContentValues
 
 class MainActivity : AppCompatActivity(), Detector.DetectorListener {
     private lateinit var binding: ActivityMainBinding
@@ -49,6 +58,12 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        // Capture button setup
+        val captureButton = findViewById<Button>(R.id.captureButton)
+        captureButton.setOnClickListener {
+            captureImage()
+        }
     }
 
     private fun startCamera() {
@@ -177,6 +192,53 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
                 binding.overlay.setResults(boundingBoxes)
             }
             binding.overlay.invalidate()
+        }
+    }
+
+    private fun captureImage() {
+        val bitmap = binding.viewFinder.bitmap
+        if (bitmap != null) {
+            saveImageToGallery(bitmap)
+        } else {
+            // Handle the case where bitmap is null
+        }
+    }
+
+    private fun saveImageToGallery(bitmap: Bitmap) {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+            put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+        }
+
+        val resolver = contentResolver
+        val uri: Uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues) ?: return
+
+        try {
+            val outputStream: OutputStream? = resolver.openOutputStream(uri)
+            outputStream?.let {
+                // Draw bounding boxes on the bitmap using OverlayView
+                val overlayView = binding.overlay // Assuming OverlayView is the view that draws the bounding boxes
+                val canvas = Canvas(bitmap)
+                overlayView.draw(canvas) // Draw the bounding boxes from OverlayView onto the canvas
+
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                it.close()
+            }
+
+            // Notify the system about the new image
+            sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
+
+            // Optionally, show a toast message to indicate success
+            runOnUiThread {
+                Toast.makeText(this, "Image saved to gallery", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            // Optionally, show a toast message to indicate failure
+            runOnUiThread {
+                Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
