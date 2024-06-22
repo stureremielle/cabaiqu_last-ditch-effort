@@ -147,7 +147,7 @@ class Detector(
             }
         }
 
-        if (boundingBoxes.isEmpty()) return null
+        if (boundingBoxes.isEmpty()) return emptyList()
 
         return applyNMS(boundingBoxes)
     }

@@ -1,4 +1,3 @@
-fork
-knife
-plate
-spoon
+matang
+rusak
+tidak_matang
