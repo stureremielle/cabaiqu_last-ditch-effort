@@ -206,9 +206,11 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
 
     private fun saveImageToGallery(bitmap: Bitmap) {
         val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "IMG_${System.currentTimeMillis()}.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
             put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+            put(MediaStore.Images.Media.RELATIVE_PATH, "DCIM/Camera")
         }
 
         val resolver = contentResolver
