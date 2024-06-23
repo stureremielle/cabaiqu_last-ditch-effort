@@ -51,6 +51,11 @@ class SettingsFragment : DialogFragment() {
         setInitialValues()
 
         dialog.setContentView(view)
+
+        // Apply the custom style and set the rounded background drawable
+        dialog.window?.setBackgroundDrawableResource(R.drawable.dialog_background)
+        dialog.window?.setDimAmount(0.7f) // Optional: Adjust the dim amount behind the dialog
+
         return dialog
     }
 
