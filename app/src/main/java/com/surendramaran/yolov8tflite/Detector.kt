@@ -36,6 +36,9 @@ class Detector(
         .add(CastOp(INPUT_IMAGE_TYPE))
         .build()
 
+    private var confidenceThreshold = CONFIDENCE_THRESHOLD
+    private var iouThreshold = IOU_THRESHOLD
+
     fun setup() {
         val model = FileUtil.loadMappedFile(context, modelPath)
         val options = Interpreter.Options()
@@ -91,10 +94,8 @@ class Detector(
         val output = TensorBuffer.createFixedSize(intArrayOf(1 , numChannel, numElements), OUTPUT_IMAGE_TYPE)
         interpreter?.run(imageBuffer, output.buffer)
 
-
         val bestBoxes = bestBox(output.floatArray)
         inferenceTime = SystemClock.uptimeMillis() - inferenceTime
-
 
         if (bestBoxes == null) {
             detectorListener.onEmptyDetect()
@@ -122,7 +123,7 @@ class Detector(
                 arrayIdx += numElements
             }
 
-            if (maxConf > CONFIDENCE_THRESHOLD) {
+            if (maxConf > confidenceThreshold) {
                 val clsName = labels[maxIdx]
                 val cx = array[c] // 0
                 val cy = array[c + numElements] // 1
@@ -165,7 +166,7 @@ class Detector(
             while (iterator.hasNext()) {
                 val nextBox = iterator.next()
                 val iou = calculateIoU(first, nextBox)
-                if (iou >= IOU_THRESHOLD) {
+                if (iou >= iouThreshold) {
                     iterator.remove()
                 }
             }
@@ -183,6 +184,22 @@ class Detector(
         val box1Area = box1.w * box1.h
         val box2Area = box2.w * box2.h
         return intersectionArea / (box1Area + box2Area - intersectionArea)
+    }
+
+    fun setConfidenceThreshold(threshold: Float) {
+        confidenceThreshold = threshold
+    }
+
+    fun setIoUThreshold(threshold: Float) {
+        iouThreshold = threshold
+    }
+
+    fun getIoUThreshold(): Float {
+        return iouThreshold
+    }
+
+    fun getConfidenceThreshold(): Float {
+        return confidenceThreshold
     }
 
     interface DetectorListener {

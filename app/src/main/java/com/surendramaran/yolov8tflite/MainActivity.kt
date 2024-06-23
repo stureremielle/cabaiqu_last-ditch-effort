@@ -30,8 +30,9 @@ import java.io.OutputStream
 import android.content.Intent
 import android.widget.Toast
 import android.content.ContentValues
+import android.widget.ImageButton
 
-class MainActivity : AppCompatActivity(), Detector.DetectorListener {
+class MainActivity : AppCompatActivity(), Detector.DetectorListener, SettingsFragment.SettingsFragmentListener {
     private lateinit var binding: ActivityMainBinding
     private val isFrontCamera = false
 
@@ -63,6 +64,14 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
         val captureButton = findViewById<Button>(R.id.captureButton)
         captureButton.setOnClickListener {
             captureImage()
+        }
+
+        // Settings button setup
+        val settingsButton = findViewById<ImageButton>(R.id.btn_settings)
+        settingsButton.setOnClickListener {
+            val settingsFragment = SettingsFragment.newInstance(detector.getIoUThreshold(), detector.getConfidenceThreshold())
+            settingsFragment.setListener(this)
+            settingsFragment.show(supportFragmentManager, "SettingsFragment")
         }
     }
 
@@ -242,5 +251,13 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener {
                 Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onIoUThresholdChanged(threshold: Float) {
+        detector.setIoUThreshold(threshold)
+    }
+
+    override fun onConfidenceThresholdChanged(threshold: Float) {
+        detector.setConfidenceThreshold(threshold)
     }
 }
