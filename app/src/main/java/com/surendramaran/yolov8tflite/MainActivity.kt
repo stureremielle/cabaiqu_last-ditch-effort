@@ -73,6 +73,14 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, SettingsFra
             settingsFragment.setListener(this)
             settingsFragment.show(supportFragmentManager, "SettingsFragment")
         }
+
+        // About Us button setup
+        val aboutUsButton = findViewById<ImageButton>(R.id.btn_about)
+        aboutUsButton.setOnClickListener {
+            // Navigate to the AboutActivity
+            val intent = Intent(this, AboutActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun startCamera() {

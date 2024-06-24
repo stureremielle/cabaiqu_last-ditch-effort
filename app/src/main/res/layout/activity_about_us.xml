@@ -74,7 +74,7 @@
         app:layout_constraintVertical_bias="0.247" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/github_btn"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:background="@android:color/transparent"
