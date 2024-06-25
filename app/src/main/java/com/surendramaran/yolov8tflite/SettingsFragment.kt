@@ -1,6 +1,7 @@
 package com.surendramaran.yolov8tflite
 
 import android.app.Dialog
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.SeekBar
@@ -49,6 +50,13 @@ class SettingsFragment : DialogFragment() {
 
         setupSeekBarListeners()
         setInitialValues()
+
+        // Change SeekBar color to #4E4E4E
+        seekBarIoUThreshold.progressDrawable.setColorFilter(0xFF4E4E4E.toInt(), PorterDuff.Mode.SRC_IN)
+        seekBarIoUThreshold.thumb.setColorFilter(0xFF4E4E4E.toInt(), PorterDuff.Mode.SRC_IN)
+
+        seekBarConfidenceThreshold.progressDrawable.setColorFilter(0xFF4E4E4E.toInt(), PorterDuff.Mode.SRC_IN)
+        seekBarConfidenceThreshold.thumb.setColorFilter(0xFF4E4E4E.toInt(), PorterDuff.Mode.SRC_IN)
 
         dialog.setContentView(view)
 
