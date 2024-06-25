@@ -24,7 +24,6 @@ import java.util.concurrent.Executors
 import android.graphics.Canvas
 import android.net.Uri
 import android.provider.MediaStore
-import android.widget.Button
 import java.io.IOException
 import java.io.OutputStream
 import android.content.Intent
@@ -61,7 +60,7 @@ class MainActivity : AppCompatActivity(), Detector.DetectorListener, SettingsFra
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         // Capture button setup
-        val captureButton = findViewById<Button>(R.id.captureButton)
+        val captureButton = findViewById<ImageButton>(R.id.captureButton)
         captureButton.setOnClickListener {
             captureImage()
         }
